@@ -35,7 +35,16 @@ jobs:
           name: dist
           path: dist
 
+      - name: Verify Cypress record key is available
+        run: |
+          if [ -z "${{ secrets.CYPRESS_RECORD_KEY }}" ]; then
+            echo "CYPRESS_RECORD_KEY is empty"
+            exit 1
+          fi
+      
       - name: Cypress run
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         uses: cypress-io/github-action@v6
         with:
           start: npm start
@@ -43,4 +52,3 @@ jobs:
           wait-on-timeout: 60
           browser: chrome
           record: true
-          key: ${{ secrets.CYPRESS_RECORD_KEY }}
